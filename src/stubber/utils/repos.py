@@ -55,7 +55,7 @@ def read_micropython_lib_commits(filename: str = "data/micropython_tags.csv"):
     data = pkgutil.get_data("stubber", filename)
     if not data:
         raise FileNotFoundError(f"Resource {filename} not found")
-    version_commit = defaultdict()  # lgtm [py/multiple-definition]
+    version_commit = defaultdict()
     with tempfile.NamedTemporaryFile(prefix="tags", suffix=".csv", mode="w+t") as ntf:
         ntf.file.write(data.decode(encoding="utf8"))
         ntf.file.seek(0)

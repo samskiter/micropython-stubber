@@ -1,3 +1,7 @@
+"""
+provides default configuration and combines that with infromation read from the environment and the pyproject.toml file
+and provides that as a singleton instance CONFIG
+"""
 from pathlib import Path
 
 from typedconfig.config import Config, key, section

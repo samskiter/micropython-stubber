@@ -1,3 +1,8 @@
+"""" 
+update the fallback stubs from the defined sources
+this function is lees relevant since the introduction of the stub packages
+"""
+
 import os
 import shutil
 from distutils.dir_util import copy_tree

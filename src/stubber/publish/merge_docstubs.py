@@ -35,9 +35,29 @@ def board_folder_name(fw: Dict, *, version: Optional[str] = None):
 def get_board_path(fw: Dict):
     return CONFIG.stub_path / board_folder_name(fw)
 
-
 def get_merged_path(fw: Dict):
     return CONFIG.stub_path / (board_folder_name(fw) + "-merged")
+
+
+def get_board_path_stable(candidate:Dict[str,str], merged_path:Path):
+    board_path = None
+    if candidate["version"] == "latest":
+                # for the latest we do a bit more effort to get something 'good enough'
+                # try to get the board_path from the last released version as the basis
+        board_path = CONFIG.stub_path / board_folder_name(candidate, version=clean_version(CONFIG.STABLE_VERSION, flat=True))
+                # check again
+        if board_path.exists():
+            log.info(f"using {board_path.name} as the basis for {merged_path.name}")
+        else:
+                    # only continue if both folders exist
+            log.debug(f"skipping {merged_path.name}, no firmware stubs found")
+            board_path = None
+    else:
+                # only continue if both folders exist
+        log.debug(f"skipping {merged_path.name}, no firmware stubs found")
+        board_path = None
+    return board_path
+
 
 
 def merge_all_docstubs(
@@ -81,20 +101,8 @@ def merge_all_docstubs(
         merged_path = get_merged_path(candidate)
 
         if not board_path.exists():
-            if candidate["version"] == "latest":
-                # for the latest we do a bit more effort to get something 'good enough'
-                # try to get the board_path from the last released version as the basis
-                board_path = CONFIG.stub_path / board_folder_name(candidate, version=clean_version(CONFIG.STABLE_VERSION, flat=True))
-                # check again
-                if board_path.exists():
-                    log.info(f"using {board_path.name} as the basis for {merged_path.name}")
-                else:
-                    # only continue if both folders exist
-                    log.debug(f"skipping {merged_path.name}, no firmware stubs found")
-                    continue
-            else:
-                # only continue if both folders exist
-                log.debug(f"skipping {merged_path.name}, no firmware stubs found")
+            board_path = get_board_path_stable(candidate, merged_path)
+            if not board_path:
                 continue
 
         log.info(f"Merge docstubs for {merged_path.name} {candidate['version']}")
@@ -103,6 +111,7 @@ def merge_all_docstubs(
             merged += 1
     log.info(f"merged {merged} of {len(candidates)} candidates")
     return merged
+
 
 
 def copy_and_merge_docstubs(fw_path: Path, dest_path: Path, docstub_path: Path):

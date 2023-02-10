@@ -1,11 +1,10 @@
+"""
+Bump the version number of a stub release to a next version
+the next version is determined by the current version and the bump type
+"""
+
+from typing import List
 from packaging.version import Version, parse
-
-
-# def bump_postrelease(
-#     current: Version,
-#     rc: int = 0,  # o, to bump post release, or release candidate number
-# ) -> Version:
-#     return bump_version( current, rc=rc , post_bump=True  )
 
 
 def bump_version(
@@ -43,25 +42,7 @@ def bump_version(
         parts.append(f"{current.epoch}!")
     # ----------------------------------------------------------------------
     # Release segment: major.minor.micro x.y.z
-    major = current.major
-    minor = current.minor
-    micro = current.micro
-    if version_bump:  # Increase the first non-zero of micro , minor , major
-        if micro != 0:
-            micro_bump = True
-        elif minor != 0:
-            minor_bump = True
-        elif major != 0:
-            major_bump = True
-        else:
-            raise ValueError("Cannot bump version, all version numbers are zero")
-
-    # higher level bump clears lowers
-    major = major + 1 if major_bump else major
-    minor = 0 if major_bump else minor + 1 if minor_bump else minor
-    micro = 0 if minor_bump or major_bump else micro + 1 if micro_bump else micro
-
-    release = f"{major}.{minor}.{micro}"
+    release = bump_release(current, major_bump, minor_bump, micro_bump, version_bump)
     parts.append(release)
     if not release_bump:
         # ----------------------------------------------------------------------
@@ -82,10 +63,38 @@ def bump_version(
         # Local version segment
         if current.local is not None:
             parts.append(f"+{current.local}")
+    return assemble_version(parts)
+
+def assemble_version(parts:List[str]):
+    """Assemble a new version from the previous and bumped version parts"""
     try:
         # Sanity check that the new version is valid
         new = parse("".join(parts))
     except ValueError as e:
         raise ValueError(f"{''.join(parts)} is not a valid version") from e
-
+    if not isinstance(new, Version):
+        raise ValueError(f"{''.join(parts)} is not a valid version")
     return new
+
+
+def bump_release(current: Version, major_bump: bool, minor_bump: bool, micro_bump: bool, version_bump: bool):
+    """Bump the release segment of a version."""
+    major = current.major
+    minor = current.minor
+    micro = current.micro
+    if version_bump:  # Increase the first non-zero of micro , minor , major
+        if micro != 0:
+            micro_bump = True
+        elif minor != 0:
+            minor_bump = True
+        elif major != 0:
+            major_bump = True
+        else:
+            raise ValueError("Cannot bump version, all version numbers are zero")
+
+    # higher level bump clears lowers
+    major = major + 1 if major_bump else major
+    minor = 0 if major_bump else minor + 1 if minor_bump else minor
+    micro = 0 if minor_bump or major_bump else micro + 1 if micro_bump else micro
+
+    return f"{major}.{minor}.{micro}"

@@ -1,6 +1,10 @@
+"""
+utility functions for codemodding
+"""
+
 from __future__ import annotations
 from libcst import matchers as m
-from libcst.matchers._visitors import _gather_constructed_leave_funcs, _gather_constructed_visit_funcs
+from libcst.matchers._visitors import _gather_constructed_leave_funcs, _gather_constructed_visit_funcs # type: ignore
 from typing import Any, Optional
 from types import FunctionType
 import itertools
@@ -11,16 +15,14 @@ def shallow_copy_function(func: Any) -> FunctionType:
 
     The returned function is unbound and does not copy
     attributes defined on the function.
-
     """
-    ret = FunctionType(
+    return FunctionType(
         func.__code__,
         func.__globals__,
         name=func.__name__,
         argdefs=getattr(func, "__defaults__", None),
         closure=getattr(func, "__closure__", None),
     )
-    return ret
 
 
 class ScopeableMatcherTransformer(m.MatcherDecoratableTransformer):

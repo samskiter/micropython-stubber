@@ -2706,4 +2706,4 @@ tools = ["esptool"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "09a6873f8829fb1723da24d681d1a489d96b52e327db37ea179ee53b36d4a06f"
+content-hash = "f45a31a1e06f09bc0f7a5b5a72c1fc8db8efa300fa8aa9d19de0c79b52784f8e"

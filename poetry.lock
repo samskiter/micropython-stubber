@@ -1221,6 +1221,7 @@ url = "https://github.com/josverl/mpremote.git"
 reference = "HEAD"
 resolved_reference = "1d20ab04710a3b24354824f9a93669429bd5bd82"
 subdirectory = "tools/mpremote"
+
 [[package]]
 name = "mypy"
 version = "1.0.1"
@@ -2705,4 +2706,4 @@ tools = ["esptool"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "2ade6574353b6c146b71ebba0ac1437662170ddfcbf708032006faa85a24e070"
+content-hash = "09a6873f8829fb1723da24d681d1a489d96b52e327db37ea179ee53b36d4a06f"
